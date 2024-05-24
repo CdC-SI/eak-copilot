@@ -11,7 +11,17 @@ class WebScraper:
         self.logger = logging.getLogger(self.__class__.__name__)
 
     def get_response(self, url: str, timeout: int = 10) -> Optional[requests.Response]:
-        """Send a GET request and return the response object."""
+        """
+        Send a GET request and return the response object.
+
+        :param url: target URL
+        :type url: str
+        :param timeout: number of seconds the client will wait for the server to send a response
+        :type timeout: float
+
+        :return: the request response if any, otherwise None
+        :rtype: str or None
+        """
         try:
             response = self.session.get(url, timeout=timeout)
             response.raise_for_status()
@@ -21,7 +31,12 @@ class WebScraper:
             return None
 
     def get_sitemap_urls(self) -> List[str]:
-        """Extract URLs from the sitemap."""
+        """
+        Extract URLs from the sitemap.
+
+        :return: list of the extracted URLs
+        :rtype: list of str
+        """
         response = self.get_response(self.base_url)
         if not response:
             return []
@@ -33,7 +48,18 @@ class WebScraper:
         return urls
 
     def extract_text_from_tag(self, url: str, tag: str) -> str:
-        """Extract text from a specific tag in a web page."""
+        """
+        Extract text from a specific tag in a web page.
+        If no text with the tag is found, return an empty string.
+
+        :param url: target URL
+        :type url: str
+        :param tag: the specific tag
+        :type tag: str
+
+        :return: the extracted text
+        :rtype: str
+        """
         response = self.get_response(url)
         if not response:
             return ''
@@ -43,7 +69,15 @@ class WebScraper:
         return '\n'.join(line.strip() for line in body.get_text().splitlines() if line) if body else ''
 
     def detect_language(self, url: str) -> str:
-        """Detect the language of a website based on the 'lang' attribute in the HTML tag."""
+        """
+        Detect the language of a website based on the 'lang' attribute in the HTML tag.
+
+        :param url: target URL
+        :type url: str
+
+        :return: the detected language
+        :rtype: str
+        """
         response = self.get_response(url)
         if not response:
             return ''
