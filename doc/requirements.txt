@@ -1,5 +1,12 @@
+# base
 sphinx
+
+# theme
 furo
+
+# add-on elements
 sphinx-copybutton
-myst-parser
 sphinx-inline-tabs
+
+# .md support
+myst-parser

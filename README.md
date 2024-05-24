@@ -9,7 +9,7 @@ This repository serves as a proof of concept (PoC), which is slated to conclude 
 
 ## Documentation
 
-Check [the website](https://cdc-si.github.io/eak-copilot/) fore more information.
+Check [the website](https://cdc-si.github.io/eak-copilot/) for more information.
 
 ## Demo Video
 ![45-sec demo video that shows features autocomplete and RAG from the first prototype.](/demo-video.gif)

@@ -39,9 +39,9 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.todo',
     "sphinx_copybutton",
-    "myst_parser",
+    "myst_parser",          # .md support
     "sphinx_inline_tabs",
-    'sphinx.ext.napoleon',
+    'sphinx.ext.napoleon',  # NumPy & Google docstrings
 ]
 autodoc_mock_imports = ["fastapi"]
 todo_include_todos = True
