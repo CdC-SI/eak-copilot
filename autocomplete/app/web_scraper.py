@@ -4,6 +4,7 @@ from typing import List, Optional
 import logging
 from lxml import etree
 
+
 class WebScraper:
     def __init__(self, base_url: str):
         self.base_url = base_url
@@ -85,6 +86,7 @@ class WebScraper:
         soup = BeautifulSoup(response.text, 'lxml')
         html_tag = soup.find('html')
         return html_tag['lang'] if html_tag and html_tag.has_attr('lang') else ''
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
