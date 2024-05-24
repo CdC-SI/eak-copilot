@@ -28,10 +28,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 async def get_db_connection():
     """Establish a database connection."""
     conn = await asyncpg.connect(**DB_PARAMS)
     return conn
+
 
 async def get_exact_match(question: str):
     """
@@ -56,6 +58,7 @@ async def get_exact_match(question: str):
     except Exception as e:
         await conn.close()
         raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 async def get_fuzzy_match(question: str):
     """
@@ -96,6 +99,7 @@ async def get_fuzzy_match(question: str):
     except Exception as e:
         await conn.close()
         raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 async def get_semantic_similarity_match(question: str):
     """
@@ -143,6 +147,7 @@ async def get_semantic_similarity_match(question: str):
         await conn.close()
         raise HTTPException(status_code=500, detail=str(e)) from e
 
+
 @app.get("/autocomplete/", summary="Facade for autocomplete", response_description="List of matching questions")
 async def autocomplete(question: str):
     """
@@ -177,17 +182,21 @@ async def autocomplete(question: str):
 
     return unique_matches
 
+
 @app.get("/autocomplete/exact_match/", summary="Search Questions with exact match", response_description="List of matching questions")
 async def exact_match(question: str):
     return await get_exact_match(question)
+
 
 @app.get("/autocomplete/fuzzy_match/", summary="Search Questions with fuzzy match", response_description="List of matching questions")
 async def fuzzy_match(question: str):
     return await get_fuzzy_match(question)
 
+
 @app.get("/autocomplete/semantic_similarity_match/", summary="Search Questions with semantic similarity match", response_description="List of matching questions")
 async def semantic_similarity_match(question: str):
     return await get_semantic_similarity_match(question)
+
 
 @app.put("/autocomplete/data/", summary="Update or Insert Data", response_description="Updated or Inserted Data")
 async def update_or_insert_data(
@@ -248,6 +257,7 @@ async def update_or_insert_data(
         raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
         await conn.close()
+
 
 @app.put("/autocomplete/init_expert/", summary="Insert Data from faq.bsv.admin.ch", response_description="Insert Data from faq.bsv.admin.ch")
 async def init_expert():
