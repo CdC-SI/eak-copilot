@@ -39,11 +39,13 @@ async def get_exact_match(question: str):
     """
     Search for questions that contain the exact specified string, case-insensitive.
 
-    :param question: string to be searched within the questions.
-    :type question: str
+    Parameters
+    ----------
+    question : str
+        string to be searched within the questions.
 
-    :return: a list of questions that exactly match the search criteria.
-    :rtype: list of str
+    list of str
+        a list of questions that exactly match the search criteria.
     """
     conn = await get_db_connection()
     try:
@@ -64,11 +66,15 @@ async def get_fuzzy_match(question: str):
     """
     Search for questions with fuzzy match (levenstein-damerau distance) based on threshold, case-insensitive.
 
-    :param question: string to be searched within the questions.
-    :rtype: list of str
+    Parameters
+    ----------
+    question : list of str
+        string to be searched within the questions.
 
-    :return: a list of questions that match the search criteria if within the specified threshold.
-    :rtype: list of str
+    Returns
+    -------
+    list of str
+        a list of questions that match the search criteria if within the specified threshold.
     """
     conn = await get_db_connection()
     try:
@@ -105,11 +111,15 @@ async def get_semantic_similarity_match(question: str):
     """
     Search for questions with cosine (semantic) similarity using an embedding model, case-insensitive.
 
-    :param question: string to be searched within the questions.
-    :type question: str
+    Parameters
+    ----------
+    question : str
+        string to be searched within the questions.
 
-    :return: a list of 5 most similar questions based on cosine similarity.
-    :rtype: list of str
+    Returns
+    -------
+    list of str
+        a list of 5 most similar questions based on cosine similarity.
 
     .. todo::
         Returns a top_k list of questions that match the search criteria based on cosine similarity.
@@ -152,13 +162,17 @@ async def get_semantic_similarity_match(question: str):
 async def autocomplete(question: str):
     """
     Get matching results from exact matching and fuzzy matching.
-    If combined results of get_exact_match() and get_fuzzy_match() return less than 5 results, this method is called after every new "space" character in the question (user query) is added as well as when a "?" character is added at the end of the question.
+    If combined results of `get_exact_match()` and `get_fuzzy_match()` return less than 5 results, this method is called after every new "space" character in the question (user query) is added as well as when a "?" character is added at the end of the question.
 
-    :param question: string to be searched within the questions.
-    :type question: str
+    Parameters
+    ----------
+    question: str
+        string to be searched within the questions.
 
-    :return: a list of at least 5 most similar questions.
-    :rtype: list of str
+    Returns
+    -------
+    list of str
+        a list of at least 5 most similar questions.
     """
     exact_match_results, fuzzy_match_results = await asyncio.gather(
         get_exact_match(question),
@@ -209,20 +223,25 @@ async def update_or_insert_data(
     """
     Update an existing data record or insert a new one based on the presence of the question.
 
-    :param url: The URL associated with the data.
-    :type url: str
-    :param question: The question.
-    :type question: str
-    :param answer: The answer.
-    :type answer: str
-    :param language: The language of the data.
-    :type language: str
+    Parameters
+    ----------
+    url : str
+        The URL associated with the data.
+    question : str
+        The question.
+    answer : str
+        The answer.
+    language : str
+        The language of the data.
 
-    :return: the updated or inserted data record.
-    :rtype: str
+    Returns
+    -------
+    str
+        the updated or inserted data record.
 
-    .. note::
-        The operation now checks for the presence of a question in the database to decide between insert and update.
+    Notes
+    -----
+    The operation now checks for the presence of a question in the database to decide between insert and update.
     """
     conn = await get_db_connection()
     try:
@@ -271,8 +290,10 @@ async def init_expert():
     Each extracted FAQ entry is then upserted (inserted or updated if already exists) into the database, with detailed
     logging to track the operation's progress and identify any errors.
 
-    :return: a confirmation message upon successful completion of the process.
-    :rtype: str
+    Returns
+    -------
+    str
+        a confirmation message upon successful completion of the process.
 
     .. todo::
         - Consider implementing error handling at a more granular level to retry failed insertions or updates, enhancing the robustness of the data ingestion process.

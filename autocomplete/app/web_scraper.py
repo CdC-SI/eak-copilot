@@ -15,13 +15,17 @@ class WebScraper:
         """
         Send a GET request and return the response object.
 
-        :param url: target URL
-        :type url: str
-        :param timeout: number of seconds the client will wait for the server to send a response
-        :type timeout: float
+        Parameters
+        ----------
+        url : str
+            target URL
+        timeout : float
+            number of seconds the client will wait for the server to send a response
 
-        :return: the request response if any, otherwise None
-        :rtype: str or None
+        Returns
+        -------
+        str or None
+            the request response if any, otherwise None
         """
         try:
             response = self.session.get(url, timeout=timeout)
@@ -35,8 +39,10 @@ class WebScraper:
         """
         Extract URLs from the sitemap.
 
-        :return: list of the extracted URLs
-        :rtype: list of str
+        Returns
+        -------
+        list of str
+            list of the extracted URLs
         """
         response = self.get_response(self.base_url)
         if not response:
@@ -53,13 +59,17 @@ class WebScraper:
         Extract text from a specific tag in a web page.
         If no text with the tag is found, return an empty string.
 
-        :param url: target URL
-        :type url: str
-        :param tag: the specific tag
-        :type tag: str
+        Parameters
+        ----------
+        url : str
+            target URL
+        tag : str
+            the specific tag
 
-        :return: the extracted text
-        :rtype: str
+        Returns
+        -------
+        str
+            the extracted text
         """
         response = self.get_response(url)
         if not response:
@@ -73,11 +83,15 @@ class WebScraper:
         """
         Detect the language of a website based on the 'lang' attribute in the HTML tag.
 
-        :param url: target URL
-        :type url: str
+        Parameters
+        ----------
+        url : str
+            target URL
 
-        :return: the detected language
-        :rtype: str
+        Returns
+        -------
+        str
+            the detected language
         """
         response = self.get_response(url)
         if not response:
