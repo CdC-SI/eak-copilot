@@ -1,0 +1,8 @@
+fastapi==0.111.0
+uvicorn==0.29.0
+python-dotenv==1.0.1
+openai==0.28.0
+numpy==1.26.4
+asyncpg==0.29.0
+pyxDamerauLevenshtein==1.8.0
+asyncio==3.4.3

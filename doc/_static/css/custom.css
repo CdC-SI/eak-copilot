@@ -1,0 +1,31 @@
+.sidebar-tree .reference:hover {
+    border-right: 3px solid var(--color-brand-content);
+    transition-property: border-right;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 500ms;
+}
+
+.sidebar-tree a:hover {
+    color: var(--color-brand-content) !important;
+    transition-property: border-right;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 500ms;
+}
+
+.sidebar-tree .current-page {
+    border-right: 3px solid var(--color-brand-content);
+}
+
+.sidebar-tree .reference {
+    border-right: 3px solid var(--color-background-secondary);
+}
+
+a:hover, a:visited:hover {
+    color: var(--color-link--hover);
+    transition-property: all;
+    transition-duration: 500ms;
+}
+
+a, a:visited {
+    text-decoration: none;
+}

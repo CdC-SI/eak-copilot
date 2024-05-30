@@ -1,0 +1,30 @@
+# Check ... to access documentation
+autocomplete:
+  results:
+    limit: -1
+  exact_match:
+    limit: -1
+  fuzzy_match:
+    threshold: 5
+    limit: -1
+  semantic_similarity_match:
+    metric: cosine_similarity
+    limit: -1
+rag:
+  embedding:
+    model: text-embedding-ada-002
+  retrieval:
+    top_k: 1
+    metric: cosine_similarity
+  llm:
+    model: gpt-4o
+    temperature: 0
+    max_output_tokens: 512
+    top_p: 0.95
+    stream: true
+indexing:
+  dev_mode: true
+  faq:
+    auto_index: true
+  rag:
+    auto_index: true

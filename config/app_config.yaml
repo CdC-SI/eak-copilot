@@ -1,0 +1,33 @@
+autocomplete:
+  title: Autocomplete service app
+  description: Provides endpoints for Autocomplete
+  version: 0.1.0
+  contact:
+    name: Kieran Schubert
+    url: https://www.linkedin.com/in/kieran-schubert-110772137/
+    email: kieran.schubert@zas.admin.ch
+  license_info:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+indexing:
+  title: Indexing service app
+  description: Provides endpoints for Indexing
+  version: 0.1.0
+  contact:
+    name: Kieran Schubert
+    url: https://www.linkedin.com/in/kieran-schubert-110772137/
+    email: kieran.schubert@zas.admin.ch
+  license_info:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+rag:
+  title: RAG service app
+  description: Provides endpoints for RAG
+  version: 0.1.0
+  contact:
+    name: Kieran Schubert
+    url: https://www.linkedin.com/in/kieran-schubert-110772137/
+    email: kieran.schubert@zas.admin.ch
+  license_info:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
