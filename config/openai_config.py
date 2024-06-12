@@ -16,7 +16,7 @@ if HTTP_PROXY != "noproxy":
     logger.info(f"Setting up HTTP_PROXY: {HTTP_PROXY}")
     import httpx
     clientAI = openai.OpenAI(
-        http_client=httpx.Client(proxy=HTTP_PROXY),
+        http_client=httpx.Client(proxy=HTTP_PROXY, verify=False),
         api_key=OPENAI_API_KEY
     )
 else:
