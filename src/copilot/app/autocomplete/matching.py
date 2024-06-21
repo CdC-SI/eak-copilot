@@ -70,6 +70,23 @@ class FuzzyMatch(Matching):
         return await queries.fuzzy_match(question, language=language, threshold=self.threshold, k=self.limit)
 
 
+class TrigramMatch(Matching):
+    """
+    A class that implements fuzzy matching through trigram matching, return results with the highest similarity score
+    first.
+    A trigram is a group of three consecutive characters taken from a string. We can measure the similarity of two
+    strings by counting the number of trigrams they share.
+    """
+    def __init__(self, threshold: int = 0.5):
+        self.match_type = "exact_match"
+        self.threshold = threshold
+        Matching.__init__(self, self.match_type)
+
+    async def match(self, question: str, language: str = None):
+
+        return await queries.trigram_match(question, language=language, threshold=self.threshold, k=self.limit)
+
+
 class SemanticMatch(Matching):
     """
     A class that implements semantic similarity matching, return results with the lowest distance first. The

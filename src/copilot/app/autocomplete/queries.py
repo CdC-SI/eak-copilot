@@ -53,6 +53,14 @@ def fuzzy_match(question: str, threshold, language: str = None, k: int = 0):
                  k=k)
 
 
+def trigram_match(question: str, threshold, language: str = None, k: int = 0):
+    return fetch(db_name='data',
+                 where=[f"word_similarity ('{question}', question) > {threshold}"],
+                 language=language,
+                 order=f"word_similarity('{question}', question) desc",
+                 k=k)
+
+
 def exact_or_fuzzy(question: str, threshold, language: str = None, k: int = 0):
     return fetch(db_name='data',
                  where=[f"LOWER(question) LIKE '{question}' OR levenshtein_less_equal('{question}', question, {threshold}) < {threshold}"],

@@ -95,6 +95,28 @@ async def fuzzy_match(question: str, language: str = None):
     return await matcher.match(question, language)
 
 
+@app.get("/trigram_match",
+         summary="Search Questions with trigram match",
+         response_description="List of matching questions")
+async def trigram_match(question: str, language: str = None):
+    """
+    Return results from Trigram matching
+
+    Parameters
+    ----------
+    question : str
+       User input to match database entries
+    language : str, optional
+        Question and results language
+
+    Return
+    ------
+    list of dict
+    """
+    matcher = TrigramMatch()
+    return await matcher.match(question, language)
+
+
 @app.get("/semantic_similarity_match",
          summary="Search Questions with semantic similarity match",
          response_description="List of matching questions")
