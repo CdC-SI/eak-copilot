@@ -24,51 +24,25 @@ MLX_GENERATION_ENDPOINT = os.environ["MLX_GENERATION_ENDPOINT"]
 
 class MlxLLM(LLM):
     """
-    A class that encapsulates methods to interact with an MLX LLM deployed on a server.
+    Class used to generate responses using a MLX Large Language Model (LLM) running on a local server.
 
     Attributes
     ----------
     model_name : str
-        The name of the MLX LLM model.
+        The name of the MLX LLM model to use for response generation.
     stream : bool
-        Whether to stream the response.
-    temperature : float
-        The temperature to use for the generation.
-    top_p : float
-        The top_p value to use for the generation.
-    client : None
-        Currently not used.
+        Whether to stream the response generation.
 
     Methods
     -------
-    generate(messages: List[dict]) -> Generator[str, None, None]:
-        Generate a response using the MLX LLM model.
-    stream():
+    generate(messages: List[dict]) -> str
+        Generates a response for a list of messages using the MLX LLM model.
+    stream()
         Placeholder method for streaming. Currently not implemented.
     """
-    def __init__(self, model_name: str = DEFAULT_MLX_LLM_MODEL, stream: bool = True, temperature: float = 0.0, top_p: float = 0.95, top_k: int = 0, max_tokens: int = 512, verbose: bool = False):
-        """
-        Initialize an instance of the MlxLLM class.
-
-        Parameters
-        ----------
-        model_name : str, optional
-            The name of the MLX LLM model, by default DEFAULT_MLX_LLM_MODEL
-        stream : bool, optional
-            Whether to stream the response, by default True
-        temperature : float, optional
-            The temperature to use for the generation, by default 0.0
-        top_p : float, optional
-            The top_p value to use for the generation, by default 0.95
-        """
+    def __init__(self, model_name: str = DEFAULT_MLX_LLM_MODEL, stream: bool = True):
         self.model_name = model_name if model_name is not None and model_name in SUPPORTED_MLX_LLM_MODELS else DEFAULT_MLX_LLM_MODEL
         self.stream = stream
-        self.temperature = temperature
-        self.top_p = top_p
-        self.top_k = top_k
-        self.max_tokens = max_tokens
-        self.verbose = verbose
-        self.client = None
 
     # TO DO: proper return type for generate
     def generate(self, messages: List[dict]) -> str:
@@ -102,4 +76,3 @@ class MlxLLM(LLM):
         """
         Placeholder method for streaming. Currently not implemented.
         """
-        pass
