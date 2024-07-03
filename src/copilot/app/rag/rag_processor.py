@@ -19,7 +19,7 @@ class RAGProcessor:
     ----------
     model : str
         The name of the model to be used.
-    max_token : int
+    max_tokens : int
         The maximum number of tokens for the model.
     stream : bool
         Whether to stream the response.
@@ -75,20 +75,6 @@ class RAGProcessor:
             If `self.llm_model_name` is "mlx-community/Nous-Hermes-2-Mistral-7B-DPO-4bit-MLX", it currently does nothing and returns None.
         """
         return LLMFactory.get_llm_client(self.llm_model)
-
-        # if self.llm_model_name == "gpt-3.5-turbo-0125":
-        #     return openai.OpenAI()
-        # elif self.llm_model_name == "Qwen/Qwen1.5-0.5B-Chat-GGUF":
-        #     return Llama.from_pretrained(
-        #                         repo_id="Qwen/Qwen1.5-0.5B-Chat-GGUF",
-        #                         filename="*q8_0.gguf",
-        #                         verbose=False,
-        #                         n_ctx=8192,
-        #                         n_gpu_layers=-1
-        #                 )
-        # elif self.llm_model_name == "mlx-community/Nous-Hermes-2-Mistral-7B-DPO-4bit-MLX":
-        #     # No client needed for this model at the moment, REST API requests are made to local MLX server
-        #     pass
 
     def stream_response(self, context_docs: List[str], query: str, source_url: str):
         """
