@@ -5,45 +5,38 @@ from components.embedding.base import Embedding
 
 from sentence_transformers import SentenceTransformer
 
+# Import env vars
+from components.config import SUPPORTED_ST_EMBEDDING_MODELS, DEFAULT_ST_EMBEDDING_MODEL
+
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-DEFAULT_ST_MODEL = "sentence-transformers/distiluse-base-multilingual-cased-v1"
-SUPPORTED_ST_MODELS = ["sentence-transformers/distiluse-base-multilingual-cased-v1"]
-
 
 class SentenceTransformersEmbeddings(Embedding):
     """
-    SentenceTransformers embedding model.
-
-    To use, you should have the ``sentence-transformers`` python package installed.
+    Class for embedding text documents using SentenceTransformers models.
 
     Attributes
     ----------
     model_name : str
-        The model name to be used for embeddings, defaults to DEFAULT_ST_MODEL if not provided in config.yaml.
+        The name of the SentenceTransformers model to use for embedding.
+    client : SentenceTransformer
+        The SentenceTransformer client used to generate embeddings.
 
     Methods
     -------
-    embed_documents(texts)
-        Makes a call to the SentenceTransformers embedding model (running locally) to embed a list of text documents.
-    embed_query(text)
-        Makes a call to the SentenceTransformers embedding model (running locally) to embed a single text query.
-
-    Example
-    -------
-    >>> from components.embeddings.implementations.sentence_transformers import SentenceTransformersEmbeddings
-    >>> model_name = "sentence-transformers/distiluse-base-multilingual-cased-v1"
-    >>> st_embeddings = SentenceTransformersEmbeddings(
-    >>>     model_name=model_name,
-    >>>     input=text
-    >>> )
-    >>> st_embeddings.embed_documents(["Guten", "Morgen"])
-    >>> st_embeddings.embed_query("Guten Morgen")
+    embed_documents(texts: List[str]) -> List[List[float]]
+        Embeds a list of text documents using the SentenceTransformers model.
+    embed_query(text: str) -> List[float]
+        Embeds a single text query using the SentenceTransformers model.
+    aembed_documents(texts: List[str]) -> List[List[float]]
+        Asynchronously embeds a list of text documents using the SentenceTransformers model. Not implemented yet.
+    aembed_query(text: str) -> List[float]
+        Asynchronously embeds a single text query using the SentenceTransformers model. Not implemented yet.
     """
-    def __init__(self, model_name: str = DEFAULT_ST_MODEL):
-        self.model_name = model_name if model_name is not None and model_name in SUPPORTED_ST_MODELS else DEFAULT_ST_MODEL
+    def __init__(self, model_name: str = DEFAULT_ST_EMBEDDING_MODEL):
+        self.model_name = model_name if model_name is not None and model_name in SUPPORTED_ST_EMBEDDING_MODELS else DEFAULT_ST_EMBEDDING_MODEL
         self.client = SentenceTransformer(self.model_name)
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:

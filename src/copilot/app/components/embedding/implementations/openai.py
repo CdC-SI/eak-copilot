@@ -2,17 +2,15 @@ import logging
 
 from typing import List
 from components.embedding.base import Embedding
-from components.embedding.tokenizer_factory import TokenizerFactory
+from components.tokenizer.factory import TokenizerFactory
 
 # Import env vars
 from config.openai_config import openai
+from components.config import SUPPORTED_OPENAI_EMBEDDING_MODELS, DEFAULT_OPENAI_EMBEDDING_MODEL
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-
-DEFAULT_OPENAI_MODEL = "text-embedding-ada-002"
-SUPPORTED_OPENAI_MODELS = ["text-embedding-ada-002"]
 
 
 class OpenAIEmbeddings(Embedding):
@@ -39,7 +37,7 @@ class OpenAIEmbeddings(Embedding):
     aembed_query(text: str) -> List[float]:
         Asynchronously embeds a single text query using the OpenAI API.
     """
-    def __init__(self, model_name: str = DEFAULT_OPENAI_MODEL):
+    def __init__(self, model_name: str = DEFAULT_OPENAI_EMBEDDING_MODEL):
         """
         Initializes the OpenAIEmbeddings instance.
 
@@ -49,7 +47,7 @@ class OpenAIEmbeddings(Embedding):
             The name of the OpenAI model to use for embedding. If not provided,
             the default model is used.
         """
-        self.model_name = model_name if model_name is not None and model_name in SUPPORTED_OPENAI_MODELS else DEFAULT_OPENAI_MODEL
+        self.model_name = model_name if model_name is not None and model_name in SUPPORTED_OPENAI_EMBEDDING_MODELS else DEFAULT_OPENAI_EMBEDDING_MODEL
         self.client = openai.OpenAI()
         self.tokenizer = TokenizerFactory.get_tokenizer_client(self.model_name)
         super().__init__(self.tokenizer)

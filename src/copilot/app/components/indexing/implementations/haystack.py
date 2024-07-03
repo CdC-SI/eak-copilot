@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 class HaystackScraper(BaseScraper):
     """
-    A class used to scrape URLs and extract content from them.
+    Class used to scrape URLs and extract content from them.
 
     Attributes
     ----------
@@ -32,9 +32,6 @@ class HaystackScraper(BaseScraper):
 
     Methods
     -------
-    __init__()
-        Initializes the HaystackScraper with a LinkContentFetcher instance.
-
     scrap_urls(url_list: List[str]) -> List[ByteStream]
         Scrapes the given URLs and returns the content as a list of ByteStreams.
 
@@ -49,9 +46,6 @@ class HaystackScraper(BaseScraper):
     """
 
     def __init__(self):
-        """
-        Initializes the HaystackScraper with a LinkContentFetcher instance.
-        """
         super().__init__()
         self.fetcher = LinkContentFetcher()
 
@@ -146,7 +140,7 @@ class HaystackScraper(BaseScraper):
 
 class HaystackParser(BaseParser):
     """
-    A class used to parse and clean documents.
+    Class used to parse, clean and split documents.
 
     Attributes
     ----------
@@ -164,9 +158,6 @@ class HaystackParser(BaseParser):
 
     Methods
     -------
-    __init__()
-        Initializes the HaystackParser with HTMLToDocument, PyPDFToDocument, DocumentCleaner, and DocumentSplitter instances.
-
     extract_urls_from_xml(sitemap: bytes) -> List[str]
         Extracts URLs from the given XML sitemap.
 
@@ -329,7 +320,7 @@ class HaystackParser(BaseParser):
 
 class HaystackIndexer(BaseIndexer):
     """
-    A class used to index documents into a VectorDB.
+    Class used to index documents into a VectorDB.
 
     Attributes
     ----------
@@ -342,17 +333,12 @@ class HaystackIndexer(BaseIndexer):
 
     Methods
     -------
-    __init__()
-        Initializes the HaystackIndexer with HaystackScraper, HaystackParser, and EmbeddingClient instances.
     index_html_from_sitemap(sitemap_url: str, language: str = "de") -> dict
         Indexes HTML content from the given sitemap URL into the VectorDB.
     index_pdfs_from_sitemap(sitemap_url: str, language: str = "de") -> dict
         Indexes PDF content from the given sitemap URL into the VectorDB.
     """
     def __init__(self):
-        """
-        Initializes the HaystackIndexer with HaystackScraper, HaystackParser, and Embedding instances.
-        """
         self.scraper = HaystackScraper()
         self.parser = HaystackParser()
         self.embedding_client = EmbeddingFactory.get_embedding_client(rag_config["embedding"]["model"])
