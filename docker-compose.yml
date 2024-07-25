@@ -17,6 +17,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
+    volumes:
+      - ./src/db/data:/var/lib/postgresql/data
     networks:
       - copilot-network
     restart: "no"

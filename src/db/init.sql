@@ -26,7 +26,7 @@ CREATE TABLE faq_embeddings (
 );
 
 -- Erstelle eine Tabelle namens 'data' für die Verwaltung der Informationen
-CREATE TABLE data (
+CREATE TABLE IF NOT EXISTS data (
     id SERIAL PRIMARY KEY,
     url text NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -7,7 +7,7 @@ from config.network_config import CORS_ALLOWED_ORIGINS
 
 # Load env variables
 from config.base_config import rag_app_config, rag_config
-from config.openai_config import openai
+from config.openai_config import clientAI
 
 # Load models
 from rag.rag_processor import RAGProcessor
@@ -18,14 +18,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 # Create required instances
-
 processor = RAGProcessor(model=rag_config["llm"]["model"],
                          max_token=rag_config["llm"]["max_output_tokens"],
                          stream=rag_config["llm"]["stream"],
                          temperature=rag_config["llm"]["temperature"],
                          top_p=rag_config["llm"]["top_p"],
                          top_k=rag_config["retrieval"]["top_k"],
-                         client=openai.OpenAI())
+                         client=clientAI)
 
 app = FastAPI(**rag_app_config)
 
@@ -37,6 +36,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/model",
+         status_code=200)
+def model():
+    return {"model": processor.model, "rag_config": rag_config}
 
 
 @app.post("/query",

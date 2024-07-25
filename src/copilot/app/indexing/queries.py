@@ -1,15 +1,14 @@
 from utils.db import get_db_connection
-from datetime import datetime
 
 
 async def fetchone(db_name: str, select: [str] = None, where: [str] = None):
     conn = await get_db_connection()
 
-    selection = ', '.join(['question', 'answer', 'url'] + ([] if select is None else select))
+    selection = ', '.join(['id', 'question', 'answer', 'url'] + ([] if select is None else select))
     conditions = ' AND '.join(where)
 
     try:
-        rows = await conn.fetchone(f"""
+        rows = await conn.fetchrow(f"""
             SELECT {selection}
             FROM {db_name}
             WHERE {conditions}
@@ -54,17 +53,15 @@ async def insert_data(url: str,
     conn = await get_db_connection()
 
     try:
-        row = await conn.fetchrow(f"""
+        return await conn.fetchval(f"""
             INSERT
             INTO data (url, question, answer, language)
-            VALUES ({url}, {question}, {answer}, {language})
+            VALUES ('{url}', '{question}', '{answer}', '{language}')
             RETURNING id
         """)
 
     finally:
         await conn.close()
-
-    return row['id']
 
 
 async def update_or_insert(url: str,
@@ -104,17 +101,22 @@ async def insert_faq(url: str,
 
 async def insert_rag(embedding: str,
                      text: str,
-                     url: str,
-                     created_at: datetime,
-                     modified_at: datetime):
+                     url: str):
     conn = await get_db_connection()
 
     try:
-        await conn.execute("""
-            INSERT
-            INTO embeddings (embedding, text, url, created_at, modified_at)
-            VALUES ($1, $2, $3, $4, $5)
-        """, embedding, text, url, created_at, modified_at)
+        if embedding is None:
+            await conn.execute("""
+                INSERT
+                INTO embeddings (text, url)
+                VALUES ($1, $2)
+            """, text, url)
+        else:
+            await conn.execute("""
+                INSERT
+                INTO embeddings (embedding, text, url)
+                VALUES ($1, $2, $3)
+            """, embedding, text, url)
 
     finally:
         await conn.close()

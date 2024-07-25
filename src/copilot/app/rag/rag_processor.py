@@ -91,7 +91,7 @@ class RAGProcessor:
         dict
             The requested text embedding
         """
-        embedding = get_embedding(text_input.text)[0].embedding
+        embedding = get_embedding(text_input.text)
         return {"data": embedding}
 
     def create_openai_message(self, context_docs, query):

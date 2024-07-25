@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from pyaml_env import parse_config
 import yaml
 
 # Load check_env_vars function
@@ -12,8 +13,7 @@ load_dotenv()
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.yaml')
 
 # Load the YAML configuration file
-with open(CONFIG_PATH, 'r') as file:
-    config = yaml.safe_load(file)
+config = parse_config(CONFIG_PATH)
 
 # Check env variable values from config/config.yaml
 check_env_vars(config)

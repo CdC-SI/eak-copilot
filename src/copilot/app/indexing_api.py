@@ -11,19 +11,22 @@ from config.base_config import indexing_config, indexing_app_config
 
 # Load utility functions
 from utils.db import check_db_connection
+from indexing.implementations.admin import admin_indexer
+from indexing.implementations.ahv import ahv_indexer
 from indexing.scraper import Scraper
 from indexing import dev_mode_data, queries
 
 # Load models
 from rag.models import ResponseBody
+from indexing.models import FaqItem
+
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+async def init_indexing():
     await check_db_connection(retries=10, delay=10)
 
     if indexing_config["faq"]["auto_index"]:
@@ -54,11 +57,9 @@ async def lifespan(app: FastAPI):
         else:
             raise NotImplementedError("Feature is not implemented yet.")
 
-    yield
-
 
 # Create an instance of FastAPI
-app = FastAPI(**indexing_app_config, lifespan=lifespan)
+app = FastAPI(**indexing_app_config)
 
 # Setup CORS
 app.add_middleware(
@@ -68,6 +69,56 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.post("/index_pdfs_from_sitemap",
+          summary="Index memento PDFs from the https://www.ahv-iv.ch/de/Sitemap-DE sitemap",
+          response_description="Confirmation message upon successful indexing",
+          status_code=200,
+          response_model=ResponseBody)
+async def index_pdfs_from_sitemap(sitemap_url: str = "https://www.ahv-iv.ch/de/Sitemap-DE"):
+    """
+    Indexes PDFs from a given sitemap URL. The PDFs are scraped and their data is added to the
+    embedding database. This function is specifically designed for the site "https://www.ahv-iv.ch".
+
+    Parameters
+    ----------
+    sitemap_url : str, optional
+        The URL of the sitemap to scrape PDFs from. Defaults to "https://www.ahv-iv.ch/de/Sitemap-DE".
+    language : str, optional
+        The language of the PDFs. Defaults to "de" (German).
+
+    Returns
+    -------
+    ResponseBody
+        A response body containing a confirmation message upon successful completion of the process.
+    """
+    return await ahv_indexer.index(sitemap_url)
+
+
+@app.post("/index_html_from_sitemap",
+          summary="Index HTML from a sitemap",
+          response_description="Confirmation message upon successful indexing",
+          status_code=200,
+          response_model=ResponseBody)
+async def index_html_from_sitemap(sitemap_url: str = "https://eak.admin.ch/eak/de/home.sitemap.xml"):
+    """
+    Indexes HTML from a given sitemap URL. The HTML pages are scraped and their data is added to the
+    embedding database. This function is specifically designed for the site "https://eak.admin.ch".
+
+    Parameters
+    ----------
+    sitemap_url : str, optional
+        The URL of the sitemap to scrape HTML from. Defaults to "https://eak.admin.ch/eak/de/home.sitemap.xml".
+    language : str, optional
+        The language of the HTML pages. Defaults to "de" (German).
+
+    Returns
+    -------
+    ResponseBody
+        A response body containing a confirmation message upon successful completion of the process.
+    """
+    return await admin_indexer.index(sitemap_url)
 
 
 @app.post("/index_rag_vectordb", summary="Insert Embedding data for RAG", response_description="Insert Embedding data for RAG", status_code=200, response_model=ResponseBody)
@@ -145,7 +196,7 @@ async def chunk_rag_data():
 
 
 @app.put("/index_faq_data", summary="Insert Data from faq.bsv.admin.ch", response_description="Insert Data from faq.bsv.admin.ch")
-async def index_faq_data(sitemap_url: str = 'https://faq.bsv.admin.ch/sitemap.xml', proxy: str = None, k: int = 0):
+async def index_faq_data(sitemap_url: str = 'https://faq.bsv.admin.ch/sitemap.xml', k: int = 0):
     """
     Add and index data for Autocomplete to the FAQ database. The data is obtained by scraping the website `sitemap_url`.
 
@@ -153,8 +204,6 @@ async def index_faq_data(sitemap_url: str = 'https://faq.bsv.admin.ch/sitemap.xm
     ==========
     sitemap_url : str, default 'https://faq.bsv.admin.ch/sitemap.xml'
         the `sitemap.xml` URL of the website to scrap
-    proxy : str, optional
-        Proxy URL if necessary
     k : int, default 0
         Number of article to scrap and log to test the method.
 
@@ -165,34 +214,43 @@ async def index_faq_data(sitemap_url: str = 'https://faq.bsv.admin.ch/sitemap.xm
     """
     logging.basicConfig(level=logging.INFO)
 
-    scraper = Scraper(sitemap_url, proxy=proxy)
+    scraper = Scraper(sitemap_url)
     urls = await scraper.run(test=k)
 
     return {"message": f"Done! {len(urls)} wurden verarbeitet."}
 
 
 @app.put("/data", summary="Update or Insert FAQ Data", response_description="Updated or Inserted Data")
-async def index_data(url: str, question: str, answer: str, language: str):
+async def index_data(item: FaqItem):
     """
     Upsert a single entry to the FAQ dataset.
 
     Parameters
     ----------
-    url : str
-        URL where the entry article can be found
-    question : str
-        The FAQ question
-    answer : str
-        The question answer
-    language : str
-        The article language
+    item : FaqItem
+        The FAQ item to insert or update :
+            url : str
+                URL where the entry article can be found
+            question : str
+                The FAQ question
+            answer : str
+                The question answer
+            language : str
+                The article language
 
     Returns
     -------
     dict
         The article id, url, question, answer and language upon successful completion of the process
     """
-    info, rid = await queries.update_or_insert(url, question, answer, language)
-    logger.info(f"{info}: {url}")
+    #if the item has an id we update directly
+    if item.id:
+        await queries.update_data(item.url, item.question, item.answer, item.language, item.id)
+        logger.info(f"Update item : {item.id} - {item.question}")
+        return {"id": item.id, "url": item.url, "question": item.question, "answer": item.answer, "language": item.language}
+    #if the item has no id we check if a similar question already exists anyway
+    else :
+        info, rid = await queries.update_or_insert(item.url, item.question, item.answer, item.language)
+        logger.info(f"{info}: {item.question}")
 
-    return {"id": rid, "url": url, "question": question, "answer": answer, "language": language}
+    return {"id": rid, "url": item.url, "question": item.question, "answer": item.answer, "language": item.language}

@@ -5,9 +5,6 @@ import logging
 from lxml import etree
 import re
 
-from urllib3.exceptions import InsecureRequestWarning
-from urllib3 import disable_warnings
-
 if __name__ != '__main__':
     from . import queries
 
@@ -33,14 +30,12 @@ class Scraper:
         Proxy URL if necessary
     """
 
-    def __init__(self, base_url: str, proxy: str = ''):
+    def __init__(self, base_url: str, proxy: str = None):
         self.base_url = base_url
         self.session = requests.Session()
         self.logger = logging.getLogger(self.__class__.__name__)
 
         if proxy:
-            disable_warnings(category=InsecureRequestWarning)
-            self.session.verify = False
             self.session.proxies.update({"http": proxy})
             self.session.proxies.update({"https": proxy})
 

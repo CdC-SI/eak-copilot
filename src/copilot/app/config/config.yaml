@@ -2,12 +2,12 @@
 autocomplete:
   enabled: true
   results:
-    limit: 0
+    limit: 15
   exact_match:
     limit: 0
   fuzzy_match:
-    threshold: 100
-    limit: 0
+    threshold: 50
+    limit: 2
   semantic_similarity_match:
     metric: cosine_similarity
     limit: 0
@@ -19,15 +19,15 @@ rag:
     top_k: 1
     metric: cosine_similarity
   llm:
-    model: gpt-4o
+    model: gpt-4o-mini
     temperature: 0
-    max_output_tokens: 512
+    max_output_tokens: 1024
     top_p: 0.95
     stream: true
 indexing:
   enabled: true
   dev_mode: true
   faq:
-    auto_index: false
+    auto_index: !ENV tag:yaml.org,2002:bool ${INDEXING_FAQ_AUTO:false}
   rag:
-    auto_index: false
+    auto_index: !ENV tag:yaml.org,2002:bool ${INDEXING_RAG_AUTO:false}
